@@ -2,6 +2,7 @@
 (require 2htdp/image)
 (require 2htdp/universe)
 (require racket/dict)
+(require racket/format)
 (require racket/math)
 
 (define plt-logo (bitmap/file "/Users/ephoning/Pictures/88px-scheme-logo.png"))
@@ -9,7 +10,10 @@
 (define (rot img angle) (rotate (modulo angle 360) img))
 
 ; vert-length hor-length -> degrees
-(define (atan-degr a b) (radians->degrees (atan a b)))
+(define (atan-degr a b) 
+  (cond 
+    ((and (= a 0) (= b 0)) 0)
+    (else (radians->degrees (atan a b)))))
 
 ; calculate the angle between 2 pairs of x/y coords. (a and b) relative to an origin x/y coords. pair
 (define (delta-angle x0 y0 xa ya xb yb)
@@ -25,29 +29,36 @@
 (define (_numbers->string ns acc)
   (cond
     ((empty? ns) acc)
-    (else (_numbers->string (cdr ns) (string-append acc " " (number->string (car ns)))))))
+;    (else (_numbers->string (cdr ns) (string-append acc " " (number->string (car ns)))))))
+    (else (_numbers->string (cdr ns) (string-append acc (~r (car ns) #:min-width 5))))))
 (define (numbers->string ns)
   (_numbers->string ns ""))
 (define (numbers->image ns)
-  (text (numbers->string ns) 10 "blue"))
+  (text/font (numbers->string ns) 10 "blue" #f 'modern 'normal 'normal #f))
 
 
 ; we want the dictionary to be the result; not (void)!
 (define (dict-set!! d k v) (begin (dict-set! d k v) d))
 
+; the fraction of the img width to use to create a cricle boundary around the img
+; as this fraction is used as the circle's radius, the total display size becomes:
+; img-width * fraction * 2
+; i.e., in case of 0.6 this results in 1.2 times the original img width
+(define boundary_fraction 0.75)
+
 ; create initial world state
 (define (w-start img) 
   (let* ((w (make-hash))
 ;         (disk (crop 40 40 90 90 (overlay img (circle (image-width img) "outline" "white"))))
-         (disk (overlay img (circle (image-width img) "outline" "white")))
+         (disk (overlay img (circle (* (image-width img) boundary_fraction) "outline" "white")))
          (img-center-x (/ (image-width disk) 2))
          (img-center-y (/ (image-height disk) 2)))
     (begin
-      (w-set-end w #false)
+      (w-set-end w #f)
       (w-set-img w disk)
       (w-set-img-angle w 0)
       (w-set-img-center w (cons img-center-x img-center-y))
-      (w-set-mouse-delta w #false)
+      (w-set-mouse-delta w #f)
       (w-update-mouse-state w (make-mouse-state false 0 0)))))
 
 (define (w-set-end w tf) (dict-set!! w 'end? tf))
@@ -125,8 +136,8 @@
 
 (define (do-key w kEvent) 
   (cond
-    [(key=? kEvent "q") (w-set-end w #true)]
-    [(key=? kEvent "up") (w-set-end w #true)]
+    [(key=? kEvent "q") (w-set-end w #t)]
+    [(key=? kEvent "up") (w-set-end w #t)]
     [else w]))
 
 (define (do-mouse w x y e)
