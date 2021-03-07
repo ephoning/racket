@@ -5,7 +5,7 @@
 (require racket/format)
 (require racket/math)
 
-(define plt-logo (bitmap/file "/Users/ephoning/Pictures/88px-scheme-logo.png"))
+(define plt-logo (bitmap/file "/Users/ephoning/Pictures/plt-logo-red-diffuse.png"))
 
 (define (rot img angle) (rotate (modulo angle 360) img))
 
