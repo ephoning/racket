@@ -1,0 +1,6 @@
+#lang pie
+
+
+(the (List Nat) nil)
+
+(the Nat 42)
