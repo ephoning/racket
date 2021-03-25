@@ -1,0 +1,8 @@
+#lang pie
+
+(claim + (-> Nat Nat Nat))
+(define +
+  (λ (n j)
+    (iter-Nat n
+      j
+      (λ (n) (add1 n)))))

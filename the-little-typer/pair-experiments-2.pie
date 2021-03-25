@@ -1,0 +1,35 @@
+#lang pie
+
+(claim + (-> Nat Nat Nat))
+(define +
+  (λ (n j)
+    (iter-Nat n
+      j
+      (λ (n)
+        (add1 n)))))
+
+
+(claim NNPair U)
+(define NNPair (Pair Nat Nat))
+
+; example: (the NNPair (cons 1 2))
+
+(claim NNPair-maker U)
+(define NNPair-maker (-> Nat Nat NNPair))
+
+(claim elim-NNPair (-> NNPair NNPair-maker NNPair))
+(define elim-NNPair
+  (λ (p m)
+    (m (car p) (cdr p))))
+
+(claim +-NNPairs (-> NNPair NNPair NNPair))
+(define +-NNPairs
+  (λ (p1 p2)
+    (elim-NNPair
+      p1
+      (λ (p1-l p1-r)
+        (elim-NNPair
+          p2
+          (λ (p2-l p2-r) (cons (+ p1-l p2-l) (+ p1-r p2-r))))))))
+
+; example: (+-NNPairs (cons 1 2) (cons 3 4))
