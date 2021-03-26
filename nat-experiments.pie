@@ -1,0 +1,21 @@
+#lang pie
+
+(claim + (→ Nat Nat Nat))
+(define +
+  (λ (n j)
+    (iter-Nat n
+      j
+      (λ (n)
+        (add1 n)))))
+
+(claim gaus (→ Nat Nat))
+(define gaus
+  (λ (n)
+    (rec-Nat
+      n
+      0
+      (λ (n-1 accu) (+ (add1 n-1) accu)))))
+
+; examples:
+;  (gaus 0) → 0
+;  (gaus 4) → 10
