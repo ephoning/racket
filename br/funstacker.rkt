@@ -3,6 +3,8 @@
 (define (read-syntax path port)
   (define src-lines (port->lines port))
   (define src-datums (format-datums '(handle ~a) src-lines))
+  ; path to rkt module indicates where the expander for the syntax datums
+  ; is to be found - i.e., the impllementation of '#%module-begin'
   (datum->syntax #f `(module stacker-mod "funstacker.rkt" ,@src-datums)))
 
 (provide read-syntax)
