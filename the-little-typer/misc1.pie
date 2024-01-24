@@ -1,0 +1,38 @@
+#lang pie
+
+(the Atom 'qwerty)
+
+(claim foo Atom)
+(define foo 'qwerty)
+
+(claim unit Trivial)
+(define unit sole)
+
+(check-same (-> Trivial Trivial)
+  (lambda (x) sole)
+  (lambda (y) y))
+
+
+
+
+((the (Π ((n Nat))
+          (= Nat n n))
+     (λ (n)
+       (same n)))
+   5)
+
+;; evaluated to 'null
+(which-Nat zero 'null (λ (x) 'more))
+
+;; evaluated to 3
+(which-Nat 4 0 (λ (x) x))
+
+;; NOTE: explict recursion is NOT allowed in Pie,
+;; but we do do need it for operatinos on Nat as we can use 'iter-Nat'
+(claim plus (-> Nat Nat Nat))
+(define plus (λ (x y)
+               (iter-Nat x y (λ (n) (add1 n)))))
+
+(claim gauss (-> Nat Nat))
+(define gauss
+  (λ (x) (add1 x)))
