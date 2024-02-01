@@ -81,9 +81,11 @@
 
 ;(current-pict3d-legacy? #t)
 
+(define (go)
 (big-bang3d (start)
             #:on-key on-key
             #:on-mouse on-mouse
             #:on-draw on-draw
             #:on-frame on-frame
             #:stop-state? end)
+)

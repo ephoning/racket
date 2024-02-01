@@ -12,12 +12,24 @@
                                [p (matrix* m v)])
                           (vector (matrix-ref p 0 0) (matrix-ref p 1 0))))
 
+(define (generate-numeric-sequence start end step accu)
+  (cond [(> (+ start step) end) accu]
+        [else ]))
+(define (generate-grid-markers interval count accu)
+  (cond [(zero? count) accu]
+        [else ]))
 (define backdrop (empty-scene 400 400 "grey"))
 ; objects: (<shape> <abs/rel pos> <rotation matrix>)
 (define sun    (vector (circle 50 "solid" "orange") (vector 200 200) 'nil))
 (define earth  (vector (circle 15 "solid" "blue")   (vector 90 90)   (make-rot-matrix 0.01)))
 (define moon   (vector (circle 5 "solid" "white")   (vector 30 30)   (make-rot-matrix -0.04)))
 (define rocket (vector (circle 2 "solid" "red")     (vector 10 10)   (make-rot-matrix 0.08)))
+(define grid_markers `(,(vector (square 2 "solid" "black") (vector 10 10) 'nil)
+                       ,(vector (square 2 "solid" "black") (vector 15 15) 'nil)
+                       ,(vector (square 2 "solid" "black") (vector 20 20) 'nil)
+                       ,(vector (square 2 "solid" "black") (vector 25 25) 'nil)
+                       ))
+
 
 (define (extract-element objects idx) (cond [(empty? objects) '()]
                                             [else (cons (vector-ref (car objects) idx) (extract-element (cdr objects) idx))]))
@@ -41,7 +53,7 @@
 
 (define (start) (let ([w (make-hash)])
                   (dict-set! w 'end? #false)
-                  (dict-set! w 'objects `(,sun ,earth ,moon ,rocket))
+                  (dict-set! w 'objects (append grid_markers `(,sun ,earth ,moon ,rocket)))
                   (dict-set! w 'scene (compose-scene (dict-ref w 'objects)))
                   w))
 
@@ -61,7 +73,10 @@
           [else objects])))
 
 (define (do-tick w) (let* ([objects (dict-ref w 'objects)]
-                           [rotated-objects (cons (car objects) (rotate-objects (cdr objects)))]) ; skip first object as it does not rotate
+                           [static_objs_len (+ 1 (length grid_markers))]
+                           [static_objects (take objects static_objs_len)]
+                           [to_rotate_objects (drop objects static_objs_len)]
+                           [rotated-objects (append static_objects (rotate-objects to_rotate_objects))])
                       (dict-set! w 'objects rotated-objects)
                       (dict-set! w 'scene (compose-scene rotated-objects))
 		      (dict-set! w 'objects (maybe-mod-objects rotated-objects))

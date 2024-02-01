@@ -6,7 +6,11 @@
 (keybinding "c:c;c:r" (lambda (ed evt) (send-selection ed #f)))
 (keybinding "c:c;m:e" (lambda (ed evt) (send-toplevel-form ed #t)))
 (keybinding "c:c;m:r" (lambda (ed evt) (send-selection ed #t)))
- 
+
+
+(keybinding "c:c;l" (lambda (ed evt) (send editor insert "λ")))
+
+
 (define/contract (send-toplevel-form defs shift-focus?)
   (-> any/c boolean? any)
   (when (is-a? defs drracket:unit:definitions-text<%>)
@@ -90,4 +94,4 @@
     (send frame ensure-rep-shown ints)
     (when shift-focus? (send (send ints get-canvas) focus))
     (send ints do-submission)))
- 
+

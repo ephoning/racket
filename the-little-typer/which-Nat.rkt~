@@ -1,5 +1,0 @@
-#lang pie
-
-(which-Nat 3
-  'zero
-  (λ (s) 'more))
