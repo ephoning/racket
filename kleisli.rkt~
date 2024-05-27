@@ -1,0 +1,7 @@
+#lang racket
+
+; Kleisli: carry enriched data between functiona applications
+
+(define foo (λ (x) (* x x)))
+(define bar (λ (x) (+ x 42)))
+

@@ -1,0 +1,3 @@
+#lang pie
+
+; use 'apple'-'/' to display a drop-down with special chars like Π Σ λ →

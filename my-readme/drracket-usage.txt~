@@ -1,0 +1,27 @@
+handly keyboard shortcuts, etc.:
+
+function			key seq
+---------------		   	------------------
+prev entry in REPL	   	<esc> p
+next entry in REPL	   	<esc> n
+
+keyword completion	   	<apple> /
+in editor or REPL
+
+open helpdesk based on partial	F1   (i.e., <fn> F1    on mac
+input of, e.g, function name
+
+
+
+
+
+
+comments
+--------
+
+type			char seq
+-------			-----------
+remainder of line	;
+following sexp		#;
+block start		#|
+block end		|#

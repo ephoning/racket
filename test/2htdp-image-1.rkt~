@@ -1,0 +1,160 @@
+#lang racket
+(require 2htdp/image)
+(require 2htdp/universe)
+(require racket/dict)
+(require racket/math)
+
+(define plt-logo (bitmap/file "/Volumes/Data/pictures/88px-scheme-logo.png"))
+
+(define (rot img angle) (rotate (modulo angle 360) img))
+
+; vert-length hor-length -> degrees
+(define (atan-degr a b) (radians->degrees (atan a b)))
+
+; calculate the angle between 2 pairs of x/y coords. (a and b) relative to an origin x/y coords. pair
+(define (delta-angle x0 y0 xa ya xb yb)
+  (let* ((fst-x (- xa x0))
+         (fst-y (- ya y0))
+         (snd-x (- xb x0))
+         (snd-y (- yb y0))
+         (fst-angle (round (atan-degr fst-x fst-y)))
+         (snd-angle (round (atan-degr snd-x snd-y))))
+    (round (- fst-angle snd-angle))))
+
+
+(define (_numbers->string ns acc)
+  (cond
+    ((empty? ns) acc)
+    (else (_numbers->string (cdr ns) (string-append acc " " (number->string (car ns)))))))
+(define (numbers->string ns)
+  (_numbers->string ns ""))
+(define (numbers->image ns)
+  (text (numbers->string ns) 10 "blue"))
+
+
+; we want the dictionary to be the result; not (void)!
+(define (dict-set!! d k v) (begin (dict-set! d k v) d))
+
+; create initial world state
+(define (w-start img) 
+  (let* ((w (make-hash))
+;         (disk (crop 40 40 90 90 (overlay img (circle (image-width img) "outline" "white"))))
+         (disk (overlay img (circle (image-width img) "outline" "white")))
+         (img-center-x (/ (image-width disk) 2))
+         (img-center-y (/ (image-height disk) 2)))
+    (begin
+      (w-set-end w #false)
+      (w-set-img w disk)
+      (w-set-img-angle w 0)
+      (w-set-img-center w (cons img-center-x img-center-y))
+      (w-set-mouse-delta w #false)
+      (w-update-mouse-state w (make-mouse-state false 0 0)))))
+
+(define (w-set-end w tf) (dict-set!! w 'end? tf))
+(define (w-get-end w) (dict-ref w 'end?))
+
+(define (w-set-img w img) (dict-set!! w 'img img))
+(define (w-get-img w) (dict-ref w 'img))
+
+(define (w-set-img-angle w angle) (dict-set!! w 'angle angle))
+(define (w-get-img-angle w) (dict-ref w 'angle))
+
+(define (w-set-mouse-delta w tf) (dict-set!! w 'mouse-delta tf))
+(define (w-get-mouse-delta w) (dict-ref w 'mouse-delta))
+
+; world, coord pair -> world
+(define (w-set-img-center w cp) (dict-set!! w 'center cp))
+; world -> coord pair
+(define (w-get-img-center w) (dict-ref w 'center))
+
+(define (w-set-curr-mouse-state w s) (dict-set!! w 'mouse-curr-state s))
+(define (w-get-curr-mouse-state w) (dict-ref w 'mouse-curr-state))
+(define (w-set-prev-mouse-state w s) (dict-set!! w 'mouse-prev-state s))
+(define (w-get-prev-mouse-state w) (dict-ref w 'mouse-prev-state))
+(define (w-update-mouse-state w s) 
+  (cond 
+    ((dict-has-key? w 'mouse-curr-state)
+     (begin
+       (w-set-prev-mouse-state w (w-get-curr-mouse-state w))
+       (w-set-curr-mouse-state w s)))
+    (else
+     (begin
+       (w-set-prev-mouse-state w s)
+       (w-set-curr-mouse-state w s)))))
+  
+; construct a mouse state dict; keys: 'event 'x 'y
+(define (make-mouse-state e x y)
+  (let ((ms (make-hash)))
+    (begin
+      (dict-set!! ms 'e e)
+      (dict-set!! ms 'x x)
+      (dict-set!! ms 'y y))))
+(define (mouse-state-event ms) (dict-ref ms 'e))
+(define (mouse-state-x ms) (dict-ref ms 'x))
+(define (mouse-state-y ms) (dict-ref ms 'y))
+
+(define (do-tick w)
+  (begin
+    (update-angle w)
+    (w-set-mouse-delta w #false)))
+
+; world -> world
+(define (update-angle w)
+  (let*  ((curr-angle (w-get-img-angle w))
+          (curr-mouse-state (w-get-curr-mouse-state w))
+          (prev-mouse-state (w-get-prev-mouse-state w))
+          (isdrag (and
+                   (w-get-mouse-delta w)
+                   (mouse-event? (mouse-state-event curr-mouse-state))
+                   (mouse-event? (mouse-state-event prev-mouse-state))
+                   (mouse=? (mouse-state-event curr-mouse-state) "drag")
+                   (mouse=? (mouse-state-event prev-mouse-state) "drag")))
+          (center (w-get-img-center w))
+          (delta 
+           (cond 
+             (isdrag (delta-angle
+                      (car center)
+                      (cdr center)
+                      (mouse-state-x curr-mouse-state)
+                      (mouse-state-y curr-mouse-state)
+                      (mouse-state-x prev-mouse-state)
+                      (mouse-state-y prev-mouse-state)))
+             (else 0))))
+    (w-set-img-angle w (modulo (+ curr-angle delta) 360))))
+
+
+(define (do-key w kEvent) 
+  (cond
+    [(key=? kEvent "q") (w-set-end w #true)]
+    [(key=? kEvent "up") (w-set-end w #true)]
+    [else w]))
+
+(define (do-mouse w x y e)
+  (begin
+    (w-set-mouse-delta w #true)
+    (w-update-mouse-state w (make-mouse-state e x y))))
+
+(define (do-draw w)
+  (let ((ms (w-get-curr-mouse-state w))
+        (img (w-get-img w))
+        (angle (w-get-img-angle w)))
+    (overlay/align/offset "right" "bottom"
+                         (rot img angle)
+                         30 30
+                         (numbers->image (list angle (mouse-state-x ms) (mouse-state-y ms))))))
+
+
+
+(define (do-end w) 
+  (w-get-end w))
+
+(define (start-universe)
+  (big-bang (w-start plt-logo)
+           (on-tick do-tick)
+           (on-key do-key)
+           (on-mouse do-mouse)
+           (to-draw do-draw)
+           (stop-when do-end)))
+
+(start-universe)
+

@@ -1,0 +1,15 @@
+#lang racket
+
+(require srfi/13) ; string functions
+
+(define letters "acdegilmnoprstuw")
+  
+(define (unhash v) 
+  (_unhash v "")) ; start with empty accu
+
+(define (_unhash v a)
+  (let ((index (modulo v 37)))
+    (cond ((= v 7) a)
+          (true (_unhash (/ (- v index) 37)
+                         (string-concatenate `(,(string (string-ref letters index)) ,a)))))))
+  
