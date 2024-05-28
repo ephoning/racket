@@ -1,0 +1,12 @@
+#lang racket
+
+; (require lazy/list)
+
+(define sort (l)
+  (if (empty? l) '()
+      (let* ([ltp? (λ (x) (lt (car l) x))]
+             [gtep? (λ (x) (not (ltp? x)))])
+            (append
+             (sort (filter ltp? (cdr l)))
+             (car l)
+             (sort (filter gtep? (cdr l)))))))

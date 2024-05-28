@@ -1,0 +1,18 @@
+#lang racket
+
+(require 2htdp/image)
+
+(define (unit_atan x zoom scale)
+  (* (* (/ (atan (* x zoom)) pi) 2) scale))
+
+(define (raster i x-orig y-orig x-space y-space count color)
+  (cond
+    ((= 0 count) i) 
+    (else (raster
+          (add-line i x-orig y-orig (+ 1 x-orig) (+ 1 y-orig) color)
+          (+ x-orig x-space) (+ y-orig y-space) x-space y-space (- count 1) color))))
+
+(define univ (rectangle 100 100 "solid" "black"))
+
+(define (go)
+  (raster univ 0 0 10 10 5 "white"))

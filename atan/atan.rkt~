@@ -1,0 +1,7 @@
+#lang racket
+
+(require plot)
+(require math/base)
+
+(define (unit_atan x)
+  (* (/ (atan x) pi) 2))

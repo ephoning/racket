@@ -1,0 +1,38 @@
+handly keyboard shortcuts, etc.:
+
+function			key seq
+---------------		   	------------------
+prev entry in REPL	   	<esc> p
+next entry in REPL	   	<esc> n
+
+keyword completion	   	<apple> /
+in editor or REPL
+
+open helpdesk based on partial	F1   (i.e., <fn> F1    on mac
+input of, e.g, function name
+
+
+select to left			<shift><option><left>
+select to right			<shift><option><right>
+
+sexpr navigation		<option><left/right/up/down>
+sexpr selection			<shit><option><left/right/up/down>
+
+fix indentation			<tab>
+
+wrap selection sexprs		<esc>(
+in parethesis
+
+(when in debug mode)		<ctrl>click mouse on left parenthesis od sexpr
+set breakpoint 			
+
+
+comments
+--------
+
+type			char seq
+-------			-----------
+remainder of line	;
+following sexp		#;
+block start		#|
+block end		|#

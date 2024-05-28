@@ -1,0 +1,13 @@
+#lang racket
+
+(require plot noise)
+
+(plot (contour-intervals perlin 0 1 0 1 
+                         #:samples 300
+                         #:levels 10)
+      #:x-min -1 #:x-max 1
+      #:y-min -1 #:y-max 1)
+
+
+
+      
