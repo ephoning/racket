@@ -2,6 +2,8 @@
 
 (define (read-syntax path port)
   (define src-lines (port->lines port))
-  (datum->syntax #f '(module lucy br 42)))
+  (define src-datums (format-datums '(handle ~a) src-lines))
+  (define module-datum `(module stacker-mod "stacker.rkt" ,@src-datums))
+  (datum->syntax #f module-datum))
 
-(provid read-syntax)
+(provide read-syntax)
