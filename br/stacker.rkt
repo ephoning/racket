@@ -6,13 +6,6 @@
 ;; we have to name our reader's main function 'read-syntax'
 ;; 
 (define (read-syntax path port)
-  ;; aux testing (see: stacker-test-aux.rkt)
-  ;;(dummy-read-syntax path port)
-
-  ;; partial test
-  ;;(partial-stacker-read-syntax path port)
-
-  ;; finally
   (stacker-read-syntax path port)
 )
 
@@ -25,23 +18,6 @@
   ;; (note the use of ,@ to unquote-splice list elements into the quasiquoted module expression)
   ;; (the expander to be found in 'stacker.rkt' stll needs defining here...)
   (define module-datum `(module stacker-mod "stacker.rkt" ,@src-datums))
-  ;; convert/"upgrade" the datum to a syntax object
-  ;; (note: no need to provide "program context" => use '#f' instead
-  (datum->syntax #f module-datum)  
-)
-
-(define (partial-stacker-read-syntax path port)
-  ;; get src/input lines
-  (define src-lines (port->lines port))
-  ;; construct datums from each of the raw src/input lines
-  ;; (notice bould quote to keep datums as data instead of 'handle' func calls
-  (define src-datums (format-datums ''(handle ~a) src-lines))
-  ;; construct module named 'stacker-mod', populating it with the the datums
-  ;; (note the use of ,@ to unquote-splice list elements into the quasiquoted module expression)
-  ;; (the expander to be found in 'stacker.rkt' stll needs defining here...)  
-  (define module-datum `(module stacker-mod br ,@src-datums))
-  ;; note yet: (no epxander yet)  
-  ;;(define module-datum `(module stacker-mod "stacker.rkt" ,@src-datums))
   ;; convert/"upgrade" the datum to a syntax object
   ;; (note: no need to provide "program context" => use '#f' instead
   (datum->syntax #f module-datum)  
@@ -62,6 +38,11 @@
 
 (define-macro (stacker-module-begin HANDLE-EXPR ...)
   ;; #' makes code into a datum, then into a syntax object
+  ;; note that this means that the body of this implementation is to
+  ;; contain regular (i.e., not quoted) code
+  ;;
+  ;; Racket identifers starting with the prefix #% are special
+  ;; core syntactic forms used internally by the macro expander and compiler
   #'(#%module-begin
      HANDLE-EXPR ...
      (car stack)))
