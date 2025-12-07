@@ -63,6 +63,29 @@
 (define-macro (stacker-module-begin HANDLE-EXPR ...)
   ;; #' makes code into a datum, then into a syntax object
   #'(#%module-begin
-     'HANDLE-EXPR ...))
+     HANDLE-EXPR ...
+     (car stack)))
 
 (provide (rename-out [stacker-module-begin #%module-begin]))
+
+;; ====== actual 'handle' internals ======
+
+(define stack empty)
+
+(define (pop-stack!)
+  (define v (car stack))
+  (set! stack (cdr stack))
+  v)
+
+(define (push-stack! v)
+  (set! stack (cons v stack)))
+
+;; (arg has default value of #f)
+(define (handle [arg #f])
+  (cond [(number? arg) (push-stack! arg)]
+        [(member arg `(,+ ,*)) (push-stack! (arg (pop-stack!) (pop-stack!)))]))
+
+;; 'provide is needed to make it available outside this source file
+(provide handle)
+;; this also goes for the operator; we get them from the br module
+(provide + *)
