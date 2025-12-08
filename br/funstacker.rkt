@@ -12,30 +12,26 @@
 ; '#'X' is short for '(datum->syntax X)' and also captures lexical ctxt
 (define-macro (stacker-mod-begin EXPR ...)
   #'(#%module-begin
-     EXPR ...
-     (display (first stack))))
+     (define stack empty)
+     (handle_f (cadr 'EXPR)) ...
+     (display (car stack))))
 
 ; make 'stacker-mod-begin' available outside this module under the
 ; name '#%module-begin'
 (provide (rename-out [stacker-mod-begin #%module-begin]))
 
-(define stack empty)
-
-(define (pop-stack!)
+(define (pop-stack stack)
   (define arg (first stack))
   (set! stack (rest stack))
   arg)
 
-(define (push-stack! arg)
+(define (push-stack stack arg)
   (set! stack (cons arg stack)))
 
-(define (handle [arg #f])    ; note: #f is default value for 'arg'
-  (cond
-    [(number? arg) (push-stack! arg)]
-    [(or (equal? + arg) (equal? * arg))
-     (define op-result (arg (pop-stack!) (pop-stack!)))
-     (push-stack! op-result)]))
+(define (handle_f stack [arg #f]) ; note: #f is default value for 'arg'
+  (cond [(number? arg) (push-stack stack arg)]
+        [(member arg `(,+ ,*)) (push-stack stack (arg (pop-stack stack) (pop-stack stack)))]))
 
-(provide handle)
+(provide handle_f)
 
 (provide + *)
