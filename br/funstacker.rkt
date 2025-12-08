@@ -13,7 +13,7 @@
 (define-macro (stacker-mod-begin EXPR ...)
   #'(#%module-begin
      (define stack empty)
-     (handle_f (cadr 'EXPR)) ...
+     (set! stack (car (handle_f stack EXPR))) ...
      (display (car stack))))
 
 ; make 'stacker-mod-begin' available outside this module under the
@@ -21,17 +21,24 @@
 (provide (rename-out [stacker-mod-begin #%module-begin]))
 
 (define (pop-stack stack)
-  (define arg (first stack))
-  (set! stack (rest stack))
-  arg)
+  `(,(cdr stack) . ,(car stack)))
 
 (define (push-stack stack arg)
-  (set! stack (cons arg stack)))
+  `(,(cons arg stack) . ,arg))
 
-(define (handle_f stack [arg #f]) ; note: #f is default value for 'arg'
+(define (handle [arg #f])
+  arg)
+
+(define (calc op stack)
+  (define p1 (car stack))
+  (define p2 (cadr stack))
+  (push-stack (cddr stack ) (op p1 p2)))
+
+(define (handle_f stack arg)
   (cond [(number? arg) (push-stack stack arg)]
-        [(member arg `(,+ ,*)) (push-stack stack (arg (pop-stack stack) (pop-stack stack)))]))
+        [(member arg `(,+ ,*)) (calc arg stack)]
+        [else `(,stack #f)]))
 
-(provide handle_f)
+(provide handle)
 
 (provide + *)

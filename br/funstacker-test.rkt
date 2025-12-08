@@ -1,7 +1,7 @@
 #lang reader "funstacker.rkt"
 
-3
-2
+42
+5
 *
-10
+12
 +
