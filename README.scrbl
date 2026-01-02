@@ -9,7 +9,8 @@
           @item{Cyclic Data Structures}
           @item{Hot code (re-)loading}
           @item{CTP: Category Theory in Programming}
-          @item{PIE: Dependent Type Theory}]
+          @item{PIE: Dependent Type Theory}
+          @item{Rakka: Actor Model based programming}]
 
 @section{Projects (on github.com/ephoning)}
 
@@ -24,3 +25,7 @@ Hot code loading: racket reloadable package
 @hyperlink["https://github.com/tonyg/racket-reloadable" "racket-reloadable package"]
 
 @hyperlink["https://github.com/tonyg/racket-reloadable-example" "racket-reloadable example"]
+
+Rakka
+
+@hyperlink["https://codeberg.org/Trevoke/rakka.git", "Rakka"]
