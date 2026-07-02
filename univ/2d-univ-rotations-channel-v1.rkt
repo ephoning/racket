@@ -100,6 +100,11 @@
   (set! earth new-earth)
   (dict-set! w 'objects `(,sun ,earth ,moon ,rocket)))
 
+(define (set-earth-color! new-color)
+  (let ([e (list-ref (dict-ref w 'objects) 1)])
+    (vector-set! e 0 (circle 20 "solid" new-color))))
+
+
 ;; Example getting things running and modifying a scene object: 'earth'
 ;;; Approach 1:
 ;;; > start running per:
@@ -116,4 +121,4 @@
 ;;; (thread-send t `(set-earth! (vector (circle 20 "solid" "green")   (vector 90 90)   (make-rot-matrix 0.01))))
 ;;;   USING CHANNELS INSTEAD
 ;;; (channel-put c '(set-earth! (vector (circle 20 "solid" "green")   (vector 90 90)   (make-rot-matrix 0.01))))
-
+;;; (channel-put c '(set-earth-color! "green"))
