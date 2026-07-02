@@ -26,6 +26,8 @@
 
 (define w (make-hash))
 
+(define c (make-channel))
+
 ; calc absolute position of each object
 ; list<object> -> list<abs pos>
 (define (abs-poss poss accu) (cond [(empty? poss) '()]
@@ -65,7 +67,7 @@
 ;;;          [else objects])))
 
 (define (receive-and-exec-expr)
-  (let ([msg (thread-try-receive)])
+  (let ([msg (channel-try-get c)])
     (cond [msg (eval msg)])))
 
 (define (do-tick w) (let* ([objects (dict-ref w 'objects)]
@@ -110,6 +112,8 @@
 ;;; > start running per:
 ;;;    (define t (thread start-universe))
 ;;; > send msg with new 'earth' per:
-;;; (thread-send t `(set-earth! (earth (vector (circle 20 "solid" "green")   (vector 90 90)   (make-rot-matrix 0.01)))))
-
+;;;   DOES NOT SEEM TO WORK (NEVER RECEIVES msg using 'thread-try-receive')
+;;; (thread-send t `(set-earth! (vector (circle 20 "solid" "green")   (vector 90 90)   (make-rot-matrix 0.01))))
+;;;   USING CHANNELS INSTEAD
+;;; (channel-put c '(set-earth! (vector (circle 20 "solid" "green")   (vector 90 90)   (make-rot-matrix 0.01))))
 

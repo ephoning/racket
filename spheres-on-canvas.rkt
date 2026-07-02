@@ -23,7 +23,7 @@
        (* (- (random) 0.5) 50)
        (* (- (random) 0.5) 50)))
 
-(define sphere-count 1000)
+(define sphere-count 10000)
 
 (define spheres
   (time
@@ -79,6 +79,8 @@
       ;; Rate-limit to 60 FPS
       (define end-time (fl (current-inexact-milliseconds)))
       (define delay (* #i1/1000 (max 1.0 (- #i1000/60 (- end-time start-time)))))
+      (sleep/yield delay)
+      (sleep/yield delay)
       (sleep/yield delay)
       )
      (loop (+ i 1)))))
