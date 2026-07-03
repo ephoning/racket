@@ -23,7 +23,7 @@ fix indentation			<tab>
 wrap selection sexprs		<esc>(
 in parethesis
 
-(when in debug mode)		<ctrl>click mouse on left parenthesis od sexpr
+(when in debug mode)		<ctrl>click mouse on left parenthesis of sexpr
 set breakpoint 			
 
 
