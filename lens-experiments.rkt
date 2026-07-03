@@ -20,9 +20,13 @@
 
 (define foo-lens (hash-ref-lens 'foo))
 (define sub-fi-lens (hash-ref-nested-lens 'sub 'fi))
+(define sub-foobar-lens (hash-ref-nested-lens 'sub 'foobar))
 
 (displayln d)
 (displayln (immutable? d))
-(define d-mod (lens-set sub-fi-lens d 123))
-(displayln d-mod)
-(displayln (immutable? d-mod))
+(define d_ (lens-set sub-fi-lens d 123)) ;; "mutate" existing field
+(displayln d_)
+(displayln (immutable? d_))
+(define d__ (lens-set sub-foobar-lens d_ 17)) ;; add new field
+(displayln d__)
+(displayln (immutable? d__))
