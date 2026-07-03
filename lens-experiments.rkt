@@ -30,3 +30,5 @@
 (define d__ (lens-set sub-foobar-lens d_ 17)) ;; add new field
 (displayln d__)
 (displayln (immutable? d__))
+
+(display (lens-view (hash-ref-nested-lens 'sub 'foobar) d__))
