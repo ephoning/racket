@@ -29,9 +29,12 @@
 ; unclosed viewports (if any) would disappear
 
 
+; a second viewport
+(define w2 (open-viewport "practice" 300 300))
+
 (for ([i
        (range 0 200 10)])
-  ((draw-line w) (make-posn 30 30) (make-posn (+ i 10) (+ i 100)))
+  ((draw-line w2) (make-posn 30 30) (make-posn (+ i 10) (+ i 100)))
   (sleep 1)
   )
 
