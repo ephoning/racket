@@ -104,6 +104,8 @@
   (let ([e (list-ref (dict-ref w 'objects) 1)])
     (vector-set! e 0 (circle 20 "solid" new-color))))
 
+;; TODO provide means to modify properties of objects as embedded in the world 'w'
+
 
 ;; Example getting things running and modifying a scene object: 'earth'
 ;;; Approach 1:
