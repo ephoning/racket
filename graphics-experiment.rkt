@@ -58,13 +58,13 @@
 ; - a function to associate a properties instance with each loci
 ;   this function is invoked with x and y coordinate values
 (define (grid-loci h-cnt v-cnt props-setter)
-  (for/list ([x (range 0 h-cnt)])
-    (for/list ([y (range 0 v-cnt)])
-      (list x y (props-setter x y)))))
+  (for*/list ([x (range 0 h-cnt)]
+              [y (range 0 v-cnt)])
+    (list x y (props-setter x y))))
 
 ; example prop setter
 (define (default-prop x y)
-  `(,x ,y 'none))
+  `(,x ,y ,(if (= (random 2) 1) 'alive 'dead)))
 
 
 ; side-effect only display/drawing of loci
@@ -78,16 +78,24 @@
 
 ; TODO graphics/graphics based locus visualization
 (define (draw-graphics locus)
-  42; TODO
-  )
+  (let ([x (list-ref locus 0)]
+        [y (list-ref locus 1)]
+        [state (list-ref (list-ref locus 2) 2)])
+    ((draw-solid-ellipse w2) (make-posn (+ 2 (* x 8)) (+ 2 (* y 8))) 8 8 (if (eq? state 'alive) "black" "white"))))
+
 
 
 ; a second viewport
 (define w2 (open-viewport "grid" 300 300))
 
-(draw-grid w2 40 40 10)
+; draw some loci
+(define loci (grid-loci 40 40 default-prop))
+(draw-loci loci draw-graphics)
 
-(sleep 3)
+
+;(draw-grid w2 40 40 10)
+
+(sleep 10)
 
 (close-viewport w2)
 ; viewport disappears
