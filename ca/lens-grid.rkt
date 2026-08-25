@@ -1,19 +1,15 @@
 #lang racket
 
+;; Purpose: a hash based data structure to represent cells for a 2-D cellular automaton
+;;
+;; structure:
+;; 'general -> <some hash table>   ;; <- allows storing arbitrary info applicable across the entire grid
+;; 'grid -> has table with following structure:
+;;          (x y) -> <some hash table>       ;; <- allows storing arbitrary info for a collection of x/y coordinates
+
 (require lens/common)
 (require lens/data/hash)
 
-;; mutable hash table; not suited to target in lenses
-(define d-top (make-hash))
-(define d-sub (make-hash))
-(dict-set! d-top 'foo 42)
-(dict-set! d-sub 'fi 1)
-(dict-set! d-sub 'fa 2)
-(dict-set! d-sub 'fo 3)
-(dict-set! d-top 'sub d-sub)
-
-(displayln d-top)
-(displayln (immutable? d-top))
 
 ;; immutable hash table; suitable for use in lenses
 (define d (hash 'foo 42 'sub (hash 'fi 1 'fa 2 'fo 3)))
