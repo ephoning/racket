@@ -11,6 +11,14 @@
 (require lens/data/hash)
 
 
+(define (ca-create-lens-grid xsize ysize)
+  (hash 'general (hash 'xsize xsize 'ysize ysize) 'grid (hash)))
+
+(define (ca-add-cell ca-grid x y payload)
+  (define ca-grid-xy-lens (hash-ref-nested-lens 'grid `(,x ,y)))
+  (lens-set ca-grid-xy-lens ca-grid payload))
+
+
 ;; immutable hash table; suitable for use in lenses
 (define d (hash 'foo 42 'sub (hash 'fi 1 'fa 2 'fo 3)))
 
