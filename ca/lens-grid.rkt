@@ -18,7 +18,16 @@
   (define ca-grid-xy-lens (hash-ref-nested-lens 'grid `(,x ,y)))
   (lens-set ca-grid-xy-lens ca-grid payload))
 
+;; TESTING
 
+(define my-grid (ca-create-lens-grid 10 10))
+(define my-updated-grid (ca-add-cell my-grid 3 3 (hash 'alive #t)))
+
+;; TODO: file the 10x10 grid with cells randomly alive with probability p
+(define (fill-grid lens-grid alive-prob)
+  'TODO)
+
+#|
 ;; immutable hash table; suitable for use in lenses
 (define d (hash 'foo 42 'sub (hash 'fi 1 'fa 2 'fo 3)))
 
@@ -36,3 +45,4 @@
 (displayln (immutable? d__))
 
 (display (lens-view (hash-ref-nested-lens 'sub 'foobar) d__))
+|#
