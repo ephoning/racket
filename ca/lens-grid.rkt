@@ -26,7 +26,7 @@
 (define ca-xsize-lens (hash-ref-nested-lens 'general 'xsize))
 (define ca-ysize-lens (hash-ref-nested-lens 'general 'ysize))
 
-;; TODO: file the 10x10 grid with cells randomly alive with probability p
+;; fill the grid with cells randomly alive with probability 'alive-prob'
 (define (fill-grid lens-grid alive-prob)
   (define (_fill_grid_ lens-grid xy-pairs)
     (if (empty? xy-pairs) lens-grid
