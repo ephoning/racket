@@ -26,17 +26,25 @@
 (define ca-xsize-lens (hash-ref-nested-lens 'general 'xsize))
 (define ca-ysize-lens (hash-ref-nested-lens 'general 'ysize))
 
+;; TODO: file the 10x10 grid with cells randomly alive with probability p
+(define (fill-grid lens-grid alive-prob)
+  (define (_fill_grid_ lens-grid xy-pairs)
+    (if (empty? xy-pairs) lens-grid
+        (let ([x (caar xy-pairs)]
+              [y (cadar xy-pairs)])
+          (_fill_grid_ (ca-add-cell lens-grid x y (random-t-f alive-prob)) (cdr xy-pairs)))))
+  (let* ([xsize (lens-view ca-xsize-lens lens-grid)]
+         [ysize (lens-view ca-ysize-lens lens-grid)]
+         [xy-pairs (cartesian-product (stream->list (in-range 0 xsize)) (stream->list (in-range 0 ysize)))])
+    (printf "~a / ~a / ~a" xsize ysize xy-pairs)
+    (_fill_grid_ lens-grid xy-pairs)))
+
 ;; TESTING
 
 (define my-grid (ca-create-lens-grid 10 10))
 (define my-updated-grid (ca-add-cell my-grid 3 3 (hash 'alive #t)))
 
-;; TODO: file the 10x10 grid with cells randomly alive with probability p
-(define (fill-grid lens-grid alive-prob)
-  (let* ([xsize (lens-view ca-xsize-lens lens-grid)]
-         [ysize (lens-view ca-ysize-lens lens-grid)]
-         [xy-pairs (cartesian-product (stream->list (in-range 0 xsize)) (stream->list (in-range 0 ysize)))])
-    (printf "~a / ~a / ~a" xsize ysize xy-pairs)))
+(fill-grid my-grid 42)
 
 #|
 ;; immutable hash table; suitable for use in lenses
