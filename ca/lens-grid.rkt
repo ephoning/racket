@@ -10,6 +10,8 @@
 (require lens/common)
 (require lens/data/hash)
 
+(provide ca-create-lens-grid fill-grid)
+
 ;; generate random true/false
 ;;  perc [0-100] = precentage true
 (define (random-t-f perc)
