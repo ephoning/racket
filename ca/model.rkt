@@ -27,6 +27,7 @@
 
 (define ca-xsize-lens (hash-ref-nested-lens 'general 'xsize))
 (define ca-ysize-lens (hash-ref-nested-lens 'general 'ysize))
+(define ca-grid-lens (hash-ref-lens 'grid))
 
 ;; fill the grid with cells randomly alive with probability 'alive-prob'
 (define (fill-grid lens-grid alive-prob)
@@ -41,12 +42,23 @@
     (printf "~a / ~a / ~a" xsize ysize xy-pairs)
     (_fill_grid_ lens-grid xy-pairs)))
 
+;; extract 'state' at (x,y)
+(define (ca-grid-at lens-grid x y)
+  (lens-view (hash-ref-lens `(,x ,y)) (lens-view ca-grid-lens lens-grid)))
+
 ;; TESTING
 
 (define my-grid (ca-create-lens-grid 10 10))
 (define my-updated-grid (ca-add-cell my-grid 3 3 (hash 'alive #t)))
 
 (fill-grid my-grid 42)
+
+; access x/y values example
+(define g (fill-grid my-grid 50))
+; access 'state' at (8,7) without using lens
+(hash-ref (hash-ref g 'grid) '(8 7))
+; access 'state at (8,7) using lens
+(lens-view (hash-ref-lens '(8 7)) (lens-view ca-grid-lens g))
 
 #|
 ;; immutable hash table; suitable for use in lenses
