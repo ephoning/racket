@@ -10,7 +10,7 @@
 (require lens/common)
 (require lens/data/hash)
 
-(provide ca-create-world fill-grid get-world-xsize get-world-ysize)
+(provide ca-create-world fill-grid get-world-xsize get-world-ysize ca-grid-at)
 
 ;; generate random true/false
 ;;  perc [0-100] = precentage true
@@ -44,7 +44,7 @@
   (let* ([xsize (lens-view ca-xsize-lens world)]
          [ysize (lens-view ca-ysize-lens world)]
          [xy-pairs (cartesian-product (stream->list (in-range 0 xsize)) (stream->list (in-range 0 ysize)))])
-    (printf "~a / ~a / ~a" xsize ysize xy-pairs)
+    ;(printf "~a / ~a / ~a" xsize ysize xy-pairs)
     (_fill_grid_ world xy-pairs)))
 
 ;; extract 'state' at (x,y)
@@ -52,6 +52,8 @@
   (lens-view (hash-ref-lens `(,x ,y)) (lens-view ca-grid-lens world)))
 
 ;; TESTING
+
+#|
 
 (define my-world (ca-create-world 10 10))
 (define my-updated-world (ca-add-cell my-world 3 3 (hash 'alive #t)))
@@ -90,4 +92,4 @@
 (for ([x (in-range 0 2)])
   (for ([y (in-range 0 3)])
     (printf "~a / ~a\n" x y)))
-
+|#

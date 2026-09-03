@@ -8,7 +8,3 @@
 ;; - this file: control - driver/main loop
 
 (require "model.rkt" "view.rkt")
-
-(define my-world (ca-create-world 5 5))
-
-(fill-grid my-world 42)

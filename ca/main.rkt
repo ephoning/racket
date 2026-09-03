@@ -9,6 +9,17 @@
 
 (require "model.rkt" "view.rkt" "control.rkt")
 
-(define my-world (ca-create-world 5 5))
+(define xsize 40)
+(define ysize 40)
+(define alive-prob 30) ; 'alive' cell density at 30% 
 
-(fill-grid my-world 42)
+(define my-empty-world (ca-create-world xsize ysize))
+(define my-world (fill-grid my-empty-world alive-prob))
+
+(define my-viewport (view-start (* xsize 8) (* ysize 8)))
+(draw-world my-viewport my-world)
+
+;(sleep 15)
+
+;(view-end my-viewport)
+

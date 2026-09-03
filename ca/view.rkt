@@ -3,8 +3,9 @@
 (require graphics/graphics)
 (require "model.rkt")
 
-(provide view-start view-end)
+(provide view-start view-end draw-world draw-locus)
 
+;; returns a 'viewport' instance
 (define (view-start xsize ysize)
   (open-graphics)
   (open-viewport "CA" xsize ysize))
@@ -17,7 +18,20 @@
   (let* ([xsize (get-world-xsize world)]
         [ysize (get-world-ysize world)]
         [xy-pairs (cartesian-product (stream->list (in-range 0 xsize)) (stream->list (in-range 0 ysize)))])
-    42))
+    (for ([xy-pair xy-pairs])
+      (let ([state (ca-grid-at world (list-ref xy-pair 0) (list-ref xy-pair 1))])
+        (draw-locus viewport xy-pair state)))))
+
+(define (draw-locus viewport xy-pair state)
+  (let ([x (list-ref xy-pair 0)]
+        [y (list-ref xy-pair 1)])
+    ((draw-solid-ellipse viewport) (make-posn (+ 2 (* x 8)) (+ 2 (* y 8))) 8 8 (if (eq? state #t) "black" "white"))))
+
+
+
+
+
+#|
 
 ; graphics/graphics based locus visualization
 (define (draw-graphics viewport locus)
@@ -83,3 +97,4 @@
   (sleep 5)
   (view-end vp1))
 
+|#
