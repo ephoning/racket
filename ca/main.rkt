@@ -7,8 +7,8 @@
 ;; - view: graphics for 2d visualixation
 ;; - control: - driver/main loop
 
-(require "model.rkt" "view.rkt", "control.rkt")
+(require "model.rkt" "view.rkt" "control.rkt")
 
-(define my-grid (ca-create-lens-grid 5 5))
+(define my-world (ca-create-world 5 5))
 
-(fill-grid my-grid 42)
+(fill-grid my-world 42)

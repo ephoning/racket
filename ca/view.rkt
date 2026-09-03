@@ -1,5 +1,7 @@
 #lang racket
+
 (require graphics/graphics)
+(require "model.rkt")
 
 (provide view-start view-end)
 
@@ -11,9 +13,11 @@
   (close-viewport viewport) 
   (close-graphics)) ;; unclosed viewports - if any - are close as well
 
-(define (draw-grid lens-grid)
-  42
-  )
+(define (draw-world viewport world)
+  (let* ([xsize (get-world-xsize world)]
+        [ysize (get-world-ysize world)]
+        [xy-pairs (cartesian-product (stream->list (in-range 0 xsize)) (stream->list (in-range 0 ysize)))])
+    42))
 
 ; graphics/graphics based locus visualization
 (define (draw-graphics viewport locus)

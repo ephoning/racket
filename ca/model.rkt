@@ -10,7 +10,7 @@
 (require lens/common)
 (require lens/data/hash)
 
-(provide ca-create-lens-grid fill-grid)
+(provide ca-create-world fill-grid get-world-xsize get-world-ysize)
 
 ;; generate random true/false
 ;;  perc [0-100] = precentage true
@@ -18,7 +18,7 @@
   (let ([r (random 0 100)])
     (<= r perc)))
 
-(define (ca-create-lens-grid xsize ysize)
+(define (ca-create-world xsize ysize)
   (hash 'general (hash 'xsize xsize 'ysize ysize) 'grid (hash)))
 
 (define (ca-add-cell ca-grid x y payload)
@@ -29,32 +29,37 @@
 (define ca-ysize-lens (hash-ref-nested-lens 'general 'ysize))
 (define ca-grid-lens (hash-ref-lens 'grid))
 
+(define (get-world-xsize world)
+   (lens-view ca-xsize-lens world))
+(define (get-world-ysize world)
+   (lens-view ca-ysize-lens world))
+
 ;; fill the grid with cells randomly alive with probability 'alive-prob'
-(define (fill-grid lens-grid alive-prob)
-  (define (_fill_grid_ lens-grid xy-pairs)
-    (if (empty? xy-pairs) lens-grid
+(define (fill-grid world alive-prob)
+  (define (_fill_grid_ world xy-pairs)
+    (if (empty? xy-pairs) world
         (let ([x (caar xy-pairs)]
               [y (cadar xy-pairs)])
-          (_fill_grid_ (ca-add-cell lens-grid x y (random-t-f alive-prob)) (cdr xy-pairs)))))
-  (let* ([xsize (lens-view ca-xsize-lens lens-grid)]
-         [ysize (lens-view ca-ysize-lens lens-grid)]
+          (_fill_grid_ (ca-add-cell world x y (random-t-f alive-prob)) (cdr xy-pairs)))))
+  (let* ([xsize (lens-view ca-xsize-lens world)]
+         [ysize (lens-view ca-ysize-lens world)]
          [xy-pairs (cartesian-product (stream->list (in-range 0 xsize)) (stream->list (in-range 0 ysize)))])
     (printf "~a / ~a / ~a" xsize ysize xy-pairs)
-    (_fill_grid_ lens-grid xy-pairs)))
+    (_fill_grid_ world xy-pairs)))
 
 ;; extract 'state' at (x,y)
-(define (ca-grid-at lens-grid x y)
-  (lens-view (hash-ref-lens `(,x ,y)) (lens-view ca-grid-lens lens-grid)))
+(define (ca-grid-at world x y)
+  (lens-view (hash-ref-lens `(,x ,y)) (lens-view ca-grid-lens world)))
 
 ;; TESTING
 
-(define my-grid (ca-create-lens-grid 10 10))
-(define my-updated-grid (ca-add-cell my-grid 3 3 (hash 'alive #t)))
+(define my-world (ca-create-world 10 10))
+(define my-updated-world (ca-add-cell my-world 3 3 (hash 'alive #t)))
 
-(fill-grid my-grid 42)
+(fill-grid my-world 42)
 
 ; access x/y values example
-(define g (fill-grid my-grid 50))
+(define g (fill-grid my-world 50))
 ; access 'state' at (8,7) without using lens
 (hash-ref (hash-ref g 'grid) '(8 7))
 ; access 'state at (8,7) using lens
