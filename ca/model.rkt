@@ -53,9 +53,17 @@
 (define (ca-grid-at world x y)
   (lens-view (hash-ref-lens `(,x ,y)) (lens-view ca-grid-lens world)))
 
-; implements 'life' rulesc (torus-shaped world is assumed)
+(define (get-alive-neighbors-count world x y)
+  'TODO
+  3)
+
+; apply standard Conway's Life rules
+; (torus-shaped world is assumed)
 (define (calc_new_state world x y state)
-  'TODO)
+  (let ([alive-neighbors-count (get-alive-neighbors-count world x y)])
+    (cond [(and state (or (= alive-neighbors-count 2) (= alive-neighbors-count 3))) #t]
+          [(and (not state) (= alive-neighbors-count 3)) #t]
+          [else #f])))
 
 ; returns an evolved world
 (define (ca-evolve world)
