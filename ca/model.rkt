@@ -18,9 +18,11 @@
   (let ([r (random 0 100)])
     (<= r perc)))
 
+; returns hash instance
 (define (ca-create-world xsize ysize)
   (hash 'general (hash 'xsize xsize 'ysize ysize) 'grid (hash)))
 
+; returns new/mutated ca-grid
 (define (ca-add-cell ca-grid x y payload)
   (define ca-grid-xy-lens (hash-ref-nested-lens 'grid `(,x ,y)))
   (lens-set ca-grid-xy-lens ca-grid payload))
@@ -36,20 +38,39 @@
 
 ;; fill the grid with cells randomly alive with probability 'alive-prob'
 (define (fill-grid world alive-prob)
-  (define (_fill_grid_ world xy-pairs)
+  (define (_fill_ world xy-pairs)
     (if (empty? xy-pairs) world
         (let ([x (caar xy-pairs)]
               [y (cadar xy-pairs)])
-          (_fill_grid_ (ca-add-cell world x y (random-t-f alive-prob)) (cdr xy-pairs)))))
+          (_fill_ (ca-add-cell world x y (random-t-f alive-prob)) (cdr xy-pairs)))))
   (let* ([xsize (lens-view ca-xsize-lens world)]
          [ysize (lens-view ca-ysize-lens world)]
          [xy-pairs (cartesian-product (stream->list (in-range 0 xsize)) (stream->list (in-range 0 ysize)))])
     ;(printf "~a / ~a / ~a" xsize ysize xy-pairs)
-    (_fill_grid_ world xy-pairs)))
+    (_fill_ world xy-pairs)))
 
 ;; extract 'state' at (x,y)
 (define (ca-grid-at world x y)
   (lens-view (hash-ref-lens `(,x ,y)) (lens-view ca-grid-lens world)))
+
+; implements 'life' rulesc (torus-shaped world is assumed)
+(define (calc_new_state world x y state)
+  'TODO)
+
+; returns an evolved world
+(define (ca-evolve world)
+  (define (_evolve_ world xy-pairs)
+    (if (empty? xy-pairs) world
+        (let* ([xy-pair (car xy-pairs)]
+               [x (car xy-pair)]
+               [y (cadr xy-pair)]
+               [state (ca-grid-at world x y)]
+               [new-state (calc_new_state world x y state)])
+          (_evolve_ (ca-add-cell world x y new-state) (cdr xy-pairs)))))
+  (let* ([xsize (get-world-xsize world)]
+        [ysize (get-world-ysize world)]
+        [xy-pairs (cartesian-product (stream->list (in-range 0 xsize)) (stream->list (in-range 0 ysize)))])
+    (_evolve_ world xy-pairs)))
 
 ;; TESTING
 
