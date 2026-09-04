@@ -14,18 +14,22 @@
   (close-viewport viewport) 
   (close-graphics)) ;; unclosed viewports - if any - are close as well
 
-(define (draw-world viewport world)
+(define (draw-world viewport world cell-display-size)
   (let* ([xsize (get-world-xsize world)]
         [ysize (get-world-ysize world)]
         [xy-pairs (cartesian-product (stream->list (in-range 0 xsize)) (stream->list (in-range 0 ysize)))])
     (for ([xy-pair xy-pairs])
       (let ([state (ca-grid-at world (list-ref xy-pair 0) (list-ref xy-pair 1))])
-        (draw-locus viewport xy-pair state)))))
+        (draw-locus viewport cell-display-size xy-pair state)))))
 
-(define (draw-locus viewport xy-pair state)
+(define (draw-locus viewport cell-display-size xy-pair state)
   (let ([x (list-ref xy-pair 0)]
         [y (list-ref xy-pair 1)])
-    ((draw-solid-ellipse viewport) (make-posn (+ 2 (* x 8)) (+ 2 (* y 8))) 8 8 (if (eq? state #t) "black" "white"))))
+    ((draw-solid-ellipse viewport)
+     (make-posn (+ 2 (* x cell-display-size)) (+ 2 (* y cell-display-size)))
+                cell-display-size
+                cell-display-size
+                (if (eq? state #t) "black" "white"))))
 
 
 

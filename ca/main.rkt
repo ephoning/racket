@@ -11,13 +11,14 @@
 
 (define xsize 40)
 (define ysize 40)
-(define alive-prob 30) ; 'alive' cell density at 30% 
+(define alive-prob 40) ; 'alive' cell density at 30% 
+(define cell-display-size 15)
 
 (define my-empty-world (ca-create-world xsize ysize))
 (define my-world (fill-grid my-empty-world alive-prob))
 
-(define my-viewport (view-start (* xsize 8) (* ysize 8)))
-(draw-world my-viewport my-world)
+(define my-viewport (view-start (* xsize cell-display-size) (* ysize cell-display-size)))
+(draw-world my-viewport my-world cell-display-size)
 
 ;(sleep 15)
 
